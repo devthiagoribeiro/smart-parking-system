@@ -78,13 +78,13 @@ pip install -r requirements.txt
 ### Run the full pipeline
 
 ```bash
-python backend/license-plate-service/services/plate_service.py --image-path <image_path>
+python backend/license_plate_service/services/plate_service.py --image-path <image_path>
 ```
 
 ### Run OCR only on an already cropped image
 
 ```bash
-python backend/license-plate-service/services/recognition.py --image-path <cropped_image_path>
+python backend/license_plate_service/services/recognition.py --image-path <cropped_image_path>
 ```
 
 ## Example Output

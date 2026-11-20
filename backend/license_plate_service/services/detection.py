@@ -9,7 +9,7 @@ PROJECT_ROOT = next(
 MODEL_PATH = (
     PROJECT_ROOT
     / "backend"
-    / "license-plate-service"
+    / "license_plate_service"
     / "models"
     / "vehicle_license_plate-yolo26s.pt"
 )
@@ -22,6 +22,8 @@ def detect_license_plate(full_plate_image):
     """Detects the license plate in the given image using a YOLO model and returns the ROI coordinates."""
 
     results = model.predict(source=full_plate_image, conf=0.5, device=DEVICE)
+    if not results or len(results[0].boxes) == 0:
+        return None
 
     box = results[0].boxes.xyxy[0]
     roi = (int(box[0]) - 3, int(box[1]) - 3, int(box[2]) + 3, int(box[3]) + 3)

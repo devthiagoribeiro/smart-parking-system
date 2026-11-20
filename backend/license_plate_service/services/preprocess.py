@@ -19,7 +19,7 @@ def preprocess_license_plate(image_path, roi):
     cropped_img_path = (
         PROJECT_ROOT
         / "backend"
-        / f"license-plate-service/images/cropped_images/{hash_image(image)}.jpg"
+        / f"license_plate_service/images/cropped_images/{hash_image(image)}.jpg"
     )
     cv2.imwrite(str(cropped_img_path), cropped_img)
 

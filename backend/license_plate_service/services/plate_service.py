@@ -1,8 +1,9 @@
 import logging
 import time
-from detection import detect_license_plate
-from preprocess import preprocess_license_plate
-from recognition import recognize_license_plate
+
+from .detection import detect_license_plate
+from .preprocess import preprocess_license_plate
+from .recognition import recognize_license_plate
 
 
 def process_image(image):
