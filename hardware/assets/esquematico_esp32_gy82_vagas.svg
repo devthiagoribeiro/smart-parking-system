@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="580" viewBox="0 0 680 580" role="img">
+<title>Esquemático ESP32 com dois GY-82 e LEDs de duas vagas</title>
+<desc>ESP32 DevKit à esquerda. GY-82 número 1 (vaga 1) ligado por I2C em GPIO21 (SDA) e GPIO22 (SCL). GY-82 número 2 (vaga 2) ligado por um segundo barramento I2C em GPIO16 (SDA) e GPIO17 (SCL). Ambos com 3V3 e GND. Vaga 1 com LED verde em GPIO13 e LED vermelho em GPIO14. Vaga 2 com LED verde em GPIO25 e LED vermelho em GPIO26. Cada LED tem resistor de 220 ohms e cátodo ligado ao GND comum.</desc>
+<style>
+  .box { fill: #F1EFE8; stroke: #5F5E5A; }
+  .th { font: 500 14px sans-serif; fill: #2C2C2A; }
+  .ts { font: 400 12px sans-serif; fill: #5F5E5A; }
+</style>
+<rect width="680" height="580" fill="#FFFFFF"/>
+
+<rect class="box" x="40" y="40" width="180" height="500" rx="8" stroke-width="0.5"/>
+<text class="th" x="130" y="66" text-anchor="middle" dominant-baseline="central">ESP32 DevKit</text>
+
+<!-- GY-82 #1 (vaga 1) -->
+<line x1="220" y1="100" x2="400" y2="100" fill="none" stroke="#E24B4A" stroke-width="1"/>
+<line x1="220" y1="120" x2="400" y2="120" fill="none" stroke="#888780" stroke-width="1"/>
+<line x1="220" y1="140" x2="400" y2="140" fill="none" stroke="#378ADD" stroke-width="1"/>
+<line x1="220" y1="160" x2="400" y2="160" fill="none" stroke="#378ADD" stroke-width="1"/>
+
+<!-- GY-82 #2 (vaga 2) -->
+<line x1="220" y1="220" x2="400" y2="220" fill="none" stroke="#E24B4A" stroke-width="1"/>
+<line x1="220" y1="240" x2="400" y2="240" fill="none" stroke="#888780" stroke-width="1"/>
+<line x1="220" y1="260" x2="400" y2="260" fill="none" stroke="#378ADD" stroke-width="1"/>
+<line x1="220" y1="280" x2="400" y2="280" fill="none" stroke="#378ADD" stroke-width="1"/>
+
+<text class="ts" x="208" y="100" text-anchor="end" dominant-baseline="central">3V3</text>
+<text class="ts" x="208" y="120" text-anchor="end" dominant-baseline="central">GND</text>
+<text class="ts" x="208" y="140" text-anchor="end" dominant-baseline="central">GPIO21 · SDA</text>
+<text class="ts" x="208" y="160" text-anchor="end" dominant-baseline="central">GPIO22 · SCL</text>
+<text class="ts" x="208" y="220" text-anchor="end" dominant-baseline="central">3V3</text>
+<text class="ts" x="208" y="240" text-anchor="end" dominant-baseline="central">GND</text>
+<text class="ts" x="208" y="260" text-anchor="end" dominant-baseline="central">GPIO16 · SDA</text>
+<text class="ts" x="208" y="280" text-anchor="end" dominant-baseline="central">GPIO17 · SCL</text>
+<text class="ts" x="208" y="340" text-anchor="end" dominant-baseline="central">GPIO13</text>
+<text class="ts" x="208" y="380" text-anchor="end" dominant-baseline="central">GPIO14</text>
+<text class="ts" x="208" y="440" text-anchor="end" dominant-baseline="central">GPIO25</text>
+<text class="ts" x="208" y="480" text-anchor="end" dominant-baseline="central">GPIO26</text>
+<text class="ts" x="208" y="510" text-anchor="end" dominant-baseline="central">GND</text>
+
+<circle cx="220" cy="100" r="2.5" fill="#E24B4A"/>
+<circle cx="220" cy="120" r="2.5" fill="#888780"/>
+<circle cx="220" cy="140" r="2.5" fill="#378ADD"/>
+<circle cx="220" cy="160" r="2.5" fill="#378ADD"/>
+<circle cx="220" cy="220" r="2.5" fill="#E24B4A"/>
+<circle cx="220" cy="240" r="2.5" fill="#888780"/>
+<circle cx="220" cy="260" r="2.5" fill="#378ADD"/>
+<circle cx="220" cy="280" r="2.5" fill="#378ADD"/>
+<circle cx="220" cy="340" r="2.5" fill="#378ADD"/>
+<circle cx="220" cy="380" r="2.5" fill="#378ADD"/>
+<circle cx="220" cy="440" r="2.5" fill="#378ADD"/>
+<circle cx="220" cy="480" r="2.5" fill="#378ADD"/>
+<circle cx="220" cy="510" r="2.5" fill="#888780"/>
+
+<!-- Sensor 1 -->
+<rect class="box" x="400" y="80" width="240" height="100" rx="8" stroke-width="0.5"/>
+<text class="th" x="520" y="108" text-anchor="middle" dominant-baseline="central">GY-82 #1 · Vaga 1</text>
+<text class="ts" x="520" y="130" text-anchor="middle" dominant-baseline="central">HMC5883L · 0x1E · I2C0</text>
+<text class="ts" x="412" y="100" text-anchor="start" dominant-baseline="central">VCC</text>
+<text class="ts" x="412" y="120" text-anchor="start" dominant-baseline="central">GND</text>
+<text class="ts" x="412" y="140" text-anchor="start" dominant-baseline="central">SDA</text>
+<text class="ts" x="412" y="160" text-anchor="start" dominant-baseline="central">SCL</text>
+
+<!-- Sensor 2 -->
+<rect class="box" x="400" y="200" width="240" height="100" rx="8" stroke-width="0.5"/>
+<text class="th" x="520" y="228" text-anchor="middle" dominant-baseline="central">GY-82 #2 · Vaga 2</text>
+<text class="ts" x="520" y="250" text-anchor="middle" dominant-baseline="central">HMC5883L · 0x1E · I2C1</text>
+<text class="ts" x="412" y="220" text-anchor="start" dominant-baseline="central">VCC</text>
+<text class="ts" x="412" y="240" text-anchor="start" dominant-baseline="central">GND</text>
+<text class="ts" x="412" y="260" text-anchor="start" dominant-baseline="central">SDA</text>
+<text class="ts" x="412" y="280" text-anchor="start" dominant-baseline="central">SCL</text>
+
+<text class="th" x="380" y="322" text-anchor="start" dominant-baseline="central">Vaga 1</text>
+<text class="th" x="380" y="422" text-anchor="start" dominant-baseline="central">Vaga 2</text>
+
+<!-- Vaga 1 - verde -->
+<line x1="220" y1="340" x2="380" y2="340" fill="none" stroke="#378ADD" stroke-width="1"/>
+<rect class="box" x="380" y="332" width="44" height="16" rx="3" stroke-width="0.5"/>
+<text class="ts" x="402" y="340" text-anchor="middle" dominant-baseline="central">220 Ω</text>
+<line x1="424" y1="340" x2="452" y2="340" fill="none" stroke="#888780" stroke-width="1"/>
+<polygon points="452,331 452,349 468,340" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<line x1="470" y1="331" x2="470" y2="349" fill="none" stroke="#444441" stroke-width="1.5"/>
+<line x1="470" y1="340" x2="610" y2="340" fill="none" stroke="#888780" stroke-width="1"/>
+<circle cx="610" cy="340" r="2.5" fill="#888780"/>
+<text class="ts" x="540" y="328" text-anchor="middle" dominant-baseline="central">verde</text>
+
+<!-- Vaga 1 - vermelho -->
+<line x1="220" y1="380" x2="380" y2="380" fill="none" stroke="#378ADD" stroke-width="1"/>
+<rect class="box" x="380" y="372" width="44" height="16" rx="3" stroke-width="0.5"/>
+<text class="ts" x="402" y="380" text-anchor="middle" dominant-baseline="central">220 Ω</text>
+<line x1="424" y1="380" x2="452" y2="380" fill="none" stroke="#888780" stroke-width="1"/>
+<polygon points="452,371 452,389 468,380" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.5"/>
+<line x1="470" y1="371" x2="470" y2="389" fill="none" stroke="#444441" stroke-width="1.5"/>
+<line x1="470" y1="380" x2="610" y2="380" fill="none" stroke="#888780" stroke-width="1"/>
+<circle cx="610" cy="380" r="2.5" fill="#888780"/>
+<text class="ts" x="540" y="368" text-anchor="middle" dominant-baseline="central">vermelho</text>
+
+<!-- Vaga 2 - verde -->
+<line x1="220" y1="440" x2="380" y2="440" fill="none" stroke="#378ADD" stroke-width="1"/>
+<rect class="box" x="380" y="432" width="44" height="16" rx="3" stroke-width="0.5"/>
+<text class="ts" x="402" y="440" text-anchor="middle" dominant-baseline="central">220 Ω</text>
+<line x1="424" y1="440" x2="452" y2="440" fill="none" stroke="#888780" stroke-width="1"/>
+<polygon points="452,431 452,449 468,440" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<line x1="470" y1="431" x2="470" y2="449" fill="none" stroke="#444441" stroke-width="1.5"/>
+<line x1="470" y1="440" x2="610" y2="440" fill="none" stroke="#888780" stroke-width="1"/>
+<circle cx="610" cy="440" r="2.5" fill="#888780"/>
+<text class="ts" x="540" y="428" text-anchor="middle" dominant-baseline="central">verde</text>
+
+<!-- Vaga 2 - vermelho -->
+<line x1="220" y1="480" x2="380" y2="480" fill="none" stroke="#378ADD" stroke-width="1"/>
+<rect class="box" x="380" y="472" width="44" height="16" rx="3" stroke-width="0.5"/>
+<text class="ts" x="402" y="480" text-anchor="middle" dominant-baseline="central">220 Ω</text>
+<line x1="424" y1="480" x2="452" y2="480" fill="none" stroke="#888780" stroke-width="1"/>
+<polygon points="452,471 452,489 468,480" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.5"/>
+<line x1="470" y1="471" x2="470" y2="489" fill="none" stroke="#444441" stroke-width="1.5"/>
+<line x1="470" y1="480" x2="610" y2="480" fill="none" stroke="#888780" stroke-width="1"/>
+<circle cx="610" cy="480" r="2.5" fill="#888780"/>
+<text class="ts" x="540" y="468" text-anchor="middle" dominant-baseline="central">vermelho</text>
+
+<!-- GND comum -->
+<line x1="610" y1="340" x2="610" y2="510" fill="none" stroke="#888780" stroke-width="1"/>
+<line x1="220" y1="510" x2="610" y2="510" fill="none" stroke="#888780" stroke-width="1"/>
+<circle cx="610" cy="510" r="2.5" fill="#888780"/>
+
+<text class="ts" x="340" y="560" text-anchor="middle" dominant-baseline="central">3V3 e GND dos dois sensores são os mesmos do ESP32 (linhas repetidas só para clareza).</text>
+</svg>

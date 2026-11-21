@@ -1,0 +1,53 @@
+# =========================================================
+# .gitignore - projeto ESP-IDF (estacionamentoInteligente)
+# =========================================================
+
+# --- Toolchain / SDK da Espressif ---
+# Cada integrante instala o ESP-IDF na própria máquina.
+# Nunca versionar o SDK, compiladores, CMake, Python env etc.
+components/Espressif/
+esp-idf/
+.espressif/
+
+# --- Saída de build ---
+build/
+build-*/
+cmake-build-*/
+*.o
+*.a
+*.d
+*.elf
+*.bin
+*.map
+*.hex
+
+# --- Configuração gerada pelo menuconfig ---
+# Mantemos o 'sdkconfig' versionado para todos usarem a mesma config.
+# Backups e arquivos temporários não precisam ir para o repositório.
+sdkconfig.old
+sdkconfig.*.old
+
+# --- Componentes baixados pelo Component Manager ---
+managed_components/
+dependencies.lock.bak
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# --- Editores / IDEs ---
+# Configurações do VS Code são pessoais (caminhos locais do IDF, porta COM etc.)
+.vscode/
+.idea/
+*.swp
+*~
+
+# --- Sistema operacional ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs ---
+*.log
