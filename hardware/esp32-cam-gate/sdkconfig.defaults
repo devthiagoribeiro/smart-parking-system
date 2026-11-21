@@ -1,0 +1,17 @@
+# ESP32-CAM AI-Thinker: ESP32 + 4 MB flash + 4 MB PSRAM
+CONFIG_IDF_TARGET="esp32"
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
+
+# PSRAM: framebuffers da câmera em resolução SVGA+
+CONFIG_SPIRAM=y
+
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# 1 ms de tick: vTaskDelay(pdMS_TO_TICKS(5)) precisa funcionar
+CONFIG_FREERTOS_HZ=1000
+
+# Picos de corrente do Wi-Fi + flash derrubam a tensão em fontes fracas
+# (ex.: 5 V do Arduino Uno). Com fonte boa (>= 1 A) pode reativar.
+CONFIG_ESP_BROWNOUT_DET=n

@@ -1,0 +1,40 @@
+menu "Smart Parking - Entrada"
+
+    config GATE_WIFI_SSID
+        string "Wi-Fi SSID"
+        default "minha-rede"
+
+    config GATE_WIFI_PASSWORD
+        string "Wi-Fi senha"
+        default ""
+
+    config GATE_WIFI2_SSID
+        string "Wi-Fi reserva: SSID (vazio = sem reserva)"
+        default ""
+        help
+            Se a rede principal falhar 3 vezes seguidas, a ESP tenta esta
+            (ex.: roteamento do celular), e vai alternando entre as duas.
+
+    config GATE_WIFI2_PASSWORD
+        string "Wi-Fi reserva: senha"
+        default ""
+
+    config GATE_SERVER_URL
+        string "URL do servidor"
+        default "http://192.168.0.10:8000/api/gate/entry"
+        help
+            Use o IP do PC que roda o servidor (a ESP não resolve "localhost").
+
+    config GATE_API_KEY
+        string "Chave enviada em X-Api-Key (vazio = não envia)"
+        default ""
+
+    config GATE_DEVICE_ID
+        string "ID do dispositivo (X-Device-Id)"
+        default "gate-entry-01"
+
+    config GATE_USE_ULTRASONIC
+        bool "Usar sensor HC-SR04 (desligado = presença simulada pelo monitor serial)"
+        default n
+
+endmenu
