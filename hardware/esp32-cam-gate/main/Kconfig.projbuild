@@ -21,9 +21,10 @@ menu "Smart Parking - Entrada"
 
     config GATE_SERVER_URL
         string "URL do servidor"
-        default "http://192.168.0.10:8000/api/gate/entry"
+        default "http://192.168.0.10:8000/plates/recognize"
         help
-            Use o IP do PC que roda o servidor (a ESP não resolve "localhost").
+            Endpoint da API do time (backend/api). Use o IP do PC que roda a API
+            (a ESP não resolve "localhost"). Pode ser trocado depois em http://<ip>/config.
 
     config GATE_API_KEY
         string "Chave enviada em X-Api-Key (vazio = não envia)"

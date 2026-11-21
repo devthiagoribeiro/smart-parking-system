@@ -44,8 +44,8 @@
 #define RETRY_DELAY_MS     3000   // espera entre fotos quando negado/falha
 
 // --- Rede -------------------------------------------------------------------
-#define HTTP_TIMEOUT_MS   15000   // OCR no servidor pode levar alguns segundos
-#define UPLOAD_RETRIES        3   // por foto (erro de rede ou 5xx)
+#define HTTP_TIMEOUT_MS   30000   // 1º reconhecimento da API carrega o OCR (lento)
+#define UPLOAD_RETRIES        3   // só quando a conexão falha antes de enviar a foto
 #define UPLOAD_BACKOFF_MS   700   // multiplicado pelo número da tentativa
 #define WIFI_RETRY_MS      5000
 

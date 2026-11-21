@@ -6,10 +6,11 @@ envia o JPEG ao servidor e abre a cancela (servo) só quando o servidor libera.
 ```
 carro chega ──► HC-SR04 confirma presença (mediana + 800 ms)
             ──► flash + foto (SVGA, JPEG q=10)
-            ──► POST /api/gate/entry  (até 3 tentativas)
-            ──► authorized=true  → LED verde, abre cancela
+            ──► POST /plates/recognize (API do time, multipart "image")
+            ──► success=true     → LED verde, abre cancela (entrada ou saída paga)
                                    carro sai do sensor + 2 s → fecha
-            ──► authorized=false → LED vermelho, nova foto em 3 s (máx. 3)
+            ──► success=false    → placa não lida: LED vermelho, nova foto em 3 s (máx. 3)
+            ──► 400 (sem saldo)  → LED vermelho, cancela fechada
                                    só rearma depois que o carro sair
 ```
 
@@ -21,20 +22,23 @@ carro chega ──► HC-SR04 confirma presença (mediana + 800 ms)
 | `main/camera_ctl.c` | init da OV2640 + captura com flash |
 | `main/servo.c` | servo via LEDC (timer 2, para não brigar com a câmera) |
 | `main/ultrasonic.c` | leitura do HC-SR04 |
-| `main/wifi.c` | Wi-Fi STA com reconexão automática |
-| `main/gate_api.c` | upload HTTP + retry + leitura da resposta |
+| `main/wifi.c` | Wi-Fi STA com reconexão automática e rede reserva |
+| `main/gate_api.c` | upload multipart para a API + leitura da resposta |
+| `main/web.c` | página da câmera, botões da cancela e `/config` |
+| `main/settings.c` | URL e calibração do servo salvas na NVS |
 | `main/app_config.h` | pinos, limiares, ângulos, câmera |
 | `main/Kconfig.projbuild` | Wi-Fi, URL, ID e liga/desliga sensor (via menuconfig) |
 | `main/idf_component.yml` | dependência `espressif/esp32-camera` (baixada no 1º build) |
 | `sdkconfig.defaults` | PSRAM, 4 MB flash, partição grande, tick 1 ms |
-| `tools/mock_server.py` | servidor de teste com o mesmo contrato da API |
+| `tools/mock_server.py` | imita a API do time (sem Postgres/OCR) para testar |
+| `docs/` | diagrama de pinagem e placas de teste para imprimir |
 
 O `sdkconfig` gerado guarda a senha do Wi-Fi, por isso **não vai para o Git**.
 
 ## 1. Terminar a instalação do ESP-IDF no VS Code
 
 1. `Ctrl+Shift+P` → **ESP-IDF: Configure ESP-IDF Extension** (ou *Open ESP-IDF Installation Manager*).
-2. Escolha **Express**, a versão estável mais recente (v5.x) e deixe instalar
+2. Escolha **Express**, a versão estável mais recente (testado com v6.1) e deixe instalar
    (baixa ~1–2 GB para `C:\Espressif`).
 3. Feche e reabra o VS Code.
 
@@ -46,8 +50,8 @@ O `sdkconfig` gerado guarda a senha do Wi-Fi, por isso **não vai para o Git**.
    - **Select Port to Use** → a COM do Arduino Uno.
    - **Select Flash Method** → `UART`.
 3. **SDK Configuration Editor** (ícone de engrenagem) → seção **Smart Parking - Entrada**:
-   - Wi-Fi SSID / senha
-   - URL do servidor (IP do seu PC, ex.: `http://192.168.0.10:8000/api/gate/entry`)
+   - Wi-Fi SSID / senha (rede **2,4 GHz**) e, opcional, uma rede reserva
+   - URL do servidor (IP do PC da API, ex.: `http://192.168.0.10:8000/plates/recognize`)
    - *Usar sensor HC-SR04*: deixe desmarcado até o sensor chegar.
    - Clique em **Save**.
 4. Velocidade de gravação via Uno: `Ctrl+Shift+P` → *Preferences: Open Settings (UI)* →
@@ -69,10 +73,15 @@ TX com TX e RX com RX (o Uno vira só um conversor USB-serial). **Não ligue nad
 ## 4. Compilar, gravar e monitorar
 
 1. **Build** (ícone de chave inglesa). O 1º build demora: baixa o componente da câmera.
-2. Com o IO0 no GND, aperte o **RST** da ESP32-CAM e clique em **Flash** (raio).
-   Se ficar em `Connecting....___`, aperte RST de novo.
-3. Tire o **IO0 do GND**, aperte **RST** e clique em **Monitor** (ícone de tela).
-   Para sair do monitor: `Ctrl+]`.
+   O **Flash** não recompila: depois de mudar código ou menuconfig, sempre Build antes.
+2. Feche o Monitor (`Ctrl+]`) — senão a COM fica ocupada ("Acesso negado").
+3. Com o **IO0 no GND**, tire e recoloque o fio **5V** da ESP (reinicia em modo gravação;
+   o botão RST fica embaixo da placa) e clique em **Flash** (raio).
+   Se ficar em `Connecting....___`, tire e recoloque o 5V de novo.
+4. Tire o **IO0 do GND**, tire e recoloque o **5V** e clique em **Monitor** (ícone de tela).
+
+`Write timeout` / `No serial data received`: desconecte o servo do 5V do Uno,
+desconecte e reconecte o USB do Uno e confira o RESET→GND do Uno.
 
 Pelo terminal ESP-IDF é o mesmo:
 
@@ -85,7 +94,7 @@ idf.py menuconfig
 ```
 
 ```bash
-idf.py -p COM5 -b 115200 build flash monitor
+idf.py -p COM6 -b 115200 build flash monitor
 ```
 
 ## Ver a câmera no navegador
@@ -110,18 +119,18 @@ sinal é cortado (sem pulso ele para). Para calibrar no monitor:
 
 Com um SG90 comum de 180°, use `SERVO_CONTINUOUS 0` e ajuste os ângulos.
 
-## Roteiro de teste (sem API pronta e sem sensor)
+## Roteiro de teste (sem sensor)
 
-1. **Só a placa:** grave e abra o monitor. Deve aparecer `cam: ok` e `wifi: conectado, IP ...`.
-2. **Servo, sem servidor:** digite `o` (abre) e `c` (fecha). Ajuste `SERVO_OPEN_DEG` /
-   `SERVO_CLOSED_DEG` em `main/app_config.h` até a cancela ficar certa.
-3. **Câmera + rede:** rode o `mock_server.py` (ele faz o papel da API) e digite `f`.
-   A foto aparece em `tools/captures/`; confira foco e enquadramento.
-4. **Fluxo completo:** com `--mode allow`, digite `p` → foto → cancela abre → `x` → fecha em 2 s.
-5. **Negado / lotado:** reinicie o servidor com `--mode deny` ou `--mode full` e repita `p`:
-   LED vermelho pisca, 3 tentativas, cancela continua fechada. `x` rearma.
-6. **Sem Wi-Fi / servidor fora:** pare o servidor (`Ctrl+C`) e digite `p`: 3 tentativas
-   de envio por foto, termina em ERRO e a cancela não abre.
+1. **Só a placa:** grave e abra o monitor. Deve aparecer `cam: ok` e `wifi: conectado ... IP`.
+2. **Servo, sem servidor:** `o` / `c` no monitor ou os botões da página.
+3. **Enquadramento:** imprima `docs/placa-teste.pdf` (100%) e use **Nova foto** na página.
+4. **Fluxo com o servidor de teste** (`--mode allow`, porta 8080; URL em `/config`:
+   `http://IP-DO-PC:8080/plates/recognize`): `p` → foto → `tipo=entrada`, cancela abre →
+   `x` → fecha. Repita `p`/`x`: agora `tipo=saida` (cobra a permanência).
+5. **Placa não lida:** `--mode deny` → LED vermelho, 3 fotos, cancela fechada. `x` rearma.
+6. **Sem saldo:** `--saldo 0`, faça a entrada, espere ~10 s e faça a saída → 400, vermelho.
+7. **Servidor fora:** pare o servidor e digite `p`: termina em ERRO, cancela fechada.
+8. **API real:** troque a URL em `/config` para a API do time (seção abaixo).
 
 ## Testando sem o sensor ultrassônico
 
@@ -139,26 +148,40 @@ Com o sensor desmarcado no menuconfig, digite no monitor:
 No PC (mesma rede da ESP):
 
 ```bash
-python hardware/esp32-cam-gate/tools/mock_server.py --mode allow
+python hardware/esp32-cam-gate/tools/mock_server.py --mode allow --port 8080
 ```
 
-Modos: `allow`, `deny`, `full` (lotado) e `ocr` (YOLO + OCR real; libera as placas de
-`--plates ABC1D23,XYZ9876`). As fotos recebidas ficam em `tools/captures/`.
-Libere a porta 8000 no Firewall do Windows se a ESP não conseguir conectar.
+Modos: `allow` (reconhece `--fake-plate`, padrão SPK2A26), `deny` (não reconhece),
+`full` (400 "Estacionamento lotado") e `ocr` (YOLO + OCR do repositório; precisa das
+dependências de `backend/api/requirements.txt`). `--saldo` muda o saldo inicial.
+As fotos recebidas ficam em `tools/captures/`; `GET /plates` mostra placas e saldos.
 
-## Contrato com o servidor (para quem fizer a API)
+## Integração com a API do time (`backend/api`)
 
-`POST /api/gate/entry` — headers `Content-Type: image/jpeg`, `X-Device-Id`, `X-Api-Key` (opcional);
-corpo = bytes do JPEG (não é multipart). Resposta `200`:
+A ESP envia exatamente o que a API espera:
 
-```json
-{ "authorized": true,  "plate": "ABC1D23", "reason": "ok" }
-{ "authorized": false, "plate": "ABC1D23", "reason": "not_registered" }
-{ "authorized": false, "plate": null,      "reason": "plate_not_found" }
-{ "authorized": false, "plate": "ABC1D23", "reason": "parking_full" }
+`POST /plates/recognize` — `multipart/form-data`, campo **`image`** (`placa.jpg`, `image/jpeg`),
+headers extras `X-Device-Id` e `X-Api-Key` (opcional, ignorados pela API).
+
+| Resposta da API | O que a ESP faz |
+|---|---|
+| `200 {"success": true, "plate", "saldo", "tipo"}` | abre a cancela (entrada ou saída paga) |
+| `200 {"success": false, "plate": null}` | placa não lida: vermelho, nova foto em 3 s (máx. 3) |
+| `400 {"detail": "Saldo insuficiente ..."}` | negado: vermelho, cancela fechada |
+| outro código / sem resposta | erro: cancela fechada |
+
+**Sem envio duplicado:** a API registra entrada/saída a cada reconhecimento, então a ESP
+só repete o envio se a conexão falhar *antes* de a foto ir inteira. Timeout de resposta: 30 s
+(o 1º reconhecimento carrega o OCR e demora).
+
+Para a ESP alcançar a API, ela precisa escutar na rede (não só em 127.0.0.1). Em `backend`:
+
+```bash
+uvicorn api.main:app --host 0.0.0.0 --port 8000
 ```
 
-`4xx` → a ESP não repete. `5xx`/timeout → repete até 3x. Responder em < 15 s.
+E em `http://<ip-da-esp>/config`: `http://IP-DO-PC:8000/plates/recognize`.
+Se a porta 8000 já estiver em uso no PC (ex.: outro container Docker), use `--port 8001`.
 
 ## Ligações finais (com sensor e servo)
 
@@ -185,9 +208,10 @@ os dois piscando juntos = sem Wi-Fi.
 - [x] Leitura de distância, mediana e limiar com tempo de confirmação
 - [x] Sem disparos repetidos: rearma só depois que a área fica livre
 - [x] Foto: SVGA, JPEG 10, flash, descarte de frames velhos
-- [x] Upload HTTP com retry/backoff; em falha a cancela fica fechada
-- [x] Servo abre só com `authorized: true`; fecha após passagem ou 60 s
+- [x] Upload multipart para `/plates/recognize` sem envio duplicado; em falha a cancela fica fechada
+- [x] Servo abre só com `success: true`; fecha após passagem ou 60 s
 - [x] Wi-Fi com reconexão automática; os dois LEDs piscam quando offline
-- [ ] Primeiro build no ESP-IDF
-- [ ] Calibrar ângulos do servo na maquete
+- [x] Build e gravação com ESP-IDF 6.1
+- [ ] Teste ponta a ponta com a API real + Postgres
+- [ ] Calibrar o servo na maquete (batente físico + tempo de giro)
 - [ ] Ajustar `PRESENCE_CM` e posição/foco da câmera com o sensor real

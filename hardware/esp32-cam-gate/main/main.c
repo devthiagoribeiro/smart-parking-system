@@ -194,7 +194,8 @@ static void run_state_machine(void)
         ESP_LOGI(TAG, "tentativa %d/%d", s_attempts, MAX_ATTEMPTS);
         auth_result_t r = capture_and_authorize();
         if (r == AUTH_OK) {
-            ESP_LOGI(TAG, "LIBERADO placa=%s", s_last.plate);
+            ESP_LOGI(TAG, "LIBERADO placa=%s tipo=%s saldo=%s", s_last.plate, s_last.tipo,
+                     s_last.saldo);
             set_state(ST_GATE_OPEN);
             update_status_led();
             open_gate();

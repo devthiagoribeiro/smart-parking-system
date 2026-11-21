@@ -111,7 +111,7 @@ static esp_err_t config_get_handler(httpd_req_t *req)
              "<!doctype html><html lang=pt-br><head>%s<title>Configurar</title></head><body>"
              "<h2>Configurar</h2><form method=post action=/config>"
              "<label>URL do servidor<input name=url value=\"%s\"></label>"
-             "<small>ex.: http://192.168.1.6:8080/api/gate/entry</small>"
+             "<small>API do time: http://IP-DO-PC:8000/plates/recognize</small>"
              "<label>Servo 360: tempo de giro (ms)<input name=move_ms type=number min=50 max=5000 "
              "step=10 value=%d></label>"
              "<label>Servo 360: sentido de abrir<select name=dir>"
