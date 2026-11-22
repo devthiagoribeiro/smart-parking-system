@@ -1,0 +1,91 @@
+/* Tokens de design — os mesmos do mockup aprovado. */
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --plate-band: #1d4ed8;
+  --plate-ink: #0a0e13;
+}
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0a0e13;
+  --surface: #10151c;
+  --surface-2: #151b24;
+  --inset: #0d1218;
+  --border: #1e2631;
+  --border-faint: #161c25;
+  --border-strong: #2a3441;
+  --line: #3a4656;
+  --text: #e6edf3;
+  --text-2: #c3ccd8;
+  --muted: #8d9aab;
+  --accent: #5eead4;
+  --accent-hover: #99f6e4;
+  --accent-soft: rgba(94, 234, 212, 0.12);
+  --accent-ring: rgba(94, 234, 212, 0.45);
+  --on-accent: #0a0e13;
+  --occ: #fb923c;
+  --occ-soft: rgba(251, 146, 60, 0.14);
+  --occ-ring: rgba(251, 146, 60, 0.45);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.1);
+  --danger-ring: rgba(248, 113, 113, 0.3);
+  --neutral-soft: #1a212b;
+  --stall-a: #0d1218;
+  --stall-b: #10161d;
+  --car: #1a222d;
+  --glass: rgba(10, 14, 19, 0.85);
+  --toast: rgba(21, 27, 36, 0.94);
+  --hero: linear-gradient(160deg, #13201f 0%, #10151c 60%);
+  --hero-border: #1f3532;
+  --hero-label: #9fb3b0;
+  --shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+  --plate: #f4f6f8;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #edf1f5;
+  --inset: #f5f7fa;
+  --border: #e2e8ef;
+  --border-faint: #e8edf2;
+  --border-strong: #cbd4df;
+  --line: #a3afbe;
+  --text: #0e1621;
+  --text-2: #3a4555;
+  --muted: #5b6778;
+  --accent: #0f766e;
+  --accent-hover: #115e59;
+  --accent-soft: rgba(15, 118, 110, 0.1);
+  --accent-ring: rgba(15, 118, 110, 0.4);
+  --on-accent: #ffffff;
+  --occ: #c2410c;
+  --occ-soft: rgba(194, 65, 12, 0.1);
+  --occ-ring: rgba(194, 65, 12, 0.4);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.07);
+  --danger-ring: rgba(220, 38, 38, 0.25);
+  --neutral-soft: #edf1f5;
+  --stall-a: #f1f4f8;
+  --stall-b: #e8edf3;
+  --car: #dde3ea;
+  --glass: rgba(255, 255, 255, 0.85);
+  --toast: rgba(255, 255, 255, 0.96);
+  --hero: linear-gradient(160deg, #e3f4f1 0%, #ffffff 65%);
+  --hero-border: #c9e7e1;
+  --hero-label: #3c5a55;
+  --shadow: 0 12px 32px -14px rgba(15, 23, 42, 0.25);
+  --plate: #ffffff;
+}
