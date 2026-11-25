@@ -1,0 +1,418 @@
+/* ---------- Vagas ---------- */
+.spotsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+.spotCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.stall {
+  position: relative;
+  height: 250px;
+  border-radius: 12px;
+  border-left: 2px dashed var(--line);
+  border-right: 2px dashed var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  overflow: hidden;
+  transition: box-shadow 0.4s ease;
+}
+.stallFree {
+  background: repeating-linear-gradient(135deg, var(--stall-a) 0 10px, var(--stall-b) 10px 20px);
+  animation: sp-glow 3s ease-in-out infinite;
+}
+.stallBusy {
+  background: var(--inset);
+  box-shadow: inset 0 0 0 1px var(--occ-ring);
+}
+.stallTag {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.stallState {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--occ);
+}
+.stallNumber {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+  animation: sp-fade-up 0.5s var(--ease-out) both;
+}
+.stallLabel {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+.stallSince {
+  color: var(--muted);
+  font-size: 12px;
+}
+.stallFooter {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-2);
+}
+.stallFooter strong {
+  color: var(--text);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.car {
+  color: var(--occ);
+  animation: sp-car-in 0.9s var(--ease-out) both;
+}
+.carBody {
+  fill: var(--car);
+}
+.carGlass {
+  fill: var(--bg);
+  stroke: var(--line);
+}
+.carRoof {
+  fill: var(--surface-2);
+}
+
+.sensor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.sensorHead {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+.sensorHead strong {
+  color: var(--text);
+  font-weight: 500;
+}
+.sparkline {
+  width: 100%;
+  height: 36px;
+  display: block;
+}
+.sparkLimit {
+  stroke: var(--muted);
+  opacity: 0.6;
+}
+.sensorAxis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+}
+.sensorEmpty {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px 0;
+}
+
+/* ---------- Portaria ---------- */
+.gate {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.viewfinder {
+  position: relative;
+  width: 112px;
+  height: 84px;
+  flex: none;
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 60%, #1a222d, #0a0e13);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.viewfinder::before,
+.viewfinder::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  clip-path: polygon(0 0, 18% 0, 18% 2px, 2px 2px, 2px 22%, 0 22%, 0 78%, 2px 78%, 2px calc(100% - 2px), 18% calc(100% - 2px), 18% 100%, 82% 100%, 82% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 78%, 100% 78%, 100% 22%, calc(100% - 2px) 22%, calc(100% - 2px) 2px, 82% 2px, 82% 0);
+}
+.scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(94, 234, 212, 0.75);
+  animation: sp-scan 2.2s ease-in-out infinite alternate;
+}
+.vfPlate {
+  padding: 3px 8px;
+  border: 1.5px solid #5eead4;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #e6edf3;
+}
+.vfPlateIdle {
+  border-color: #3a4656;
+  color: #8d9aab;
+}
+.gateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.gateLabel {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.gateMeta {
+  font-size: 13px;
+  color: var(--muted);
+}
+.gateMeta strong {
+  color: var(--text);
+  font-weight: 500;
+}
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  animation: sp-fade-up 0.4s var(--ease-out) both;
+}
+.alertDanger {
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-ring);
+  color: var(--danger);
+}
+.alertOk {
+  background: var(--inset);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.alert svg {
+  flex: none;
+  margin-top: 1px;
+}
+.alertBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.alertBody strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.alertBody span {
+  color: var(--text-2);
+}
+
+/* ---------- Tabela ---------- */
+.tableWrap {
+  overflow-x: auto;
+  margin: 0 -8px;
+}
+.table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.table th {
+  padding: 8px;
+  font-weight: 500;
+  color: var(--muted);
+  text-align: left;
+  white-space: nowrap;
+}
+.table td {
+  padding: 11px 8px;
+  border-top: 1px solid var(--border);
+  white-space: nowrap;
+}
+.table tbody tr {
+  transition: background-color 0.15s ease;
+}
+.table tbody tr:hover {
+  background: var(--surface-2);
+}
+.right {
+  text-align: right !important;
+}
+.cellTime {
+  font-family: var(--font-mono);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.cellPlate {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.cellSoft {
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.badgeIn {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.badgeOut {
+  color: var(--text-2);
+  background: var(--neutral-soft);
+}
+.badgeRefused {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.statusLive {
+  color: var(--accent);
+}
+.statusOk {
+  color: var(--muted);
+}
+.statusErr {
+  color: var(--danger);
+}
+
+/* ---------- Gráfico ---------- */
+.chart {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  padding-left: 48px;
+  height: 220px;
+  margin-top: 18px;
+}
+.chartGrid {
+  position: absolute;
+  inset: 0 0 24px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.gridLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gridLine span:first-child {
+  width: 40px;
+  text-align: right;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.gridLine span:last-child {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.gridLine:last-child span:last-child {
+  background: var(--border-strong);
+}
+.barCol {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+}
+.barTrack {
+  width: 100%;
+  max-width: 28px;
+  height: 196px;
+  display: flex;
+  align-items: flex-end;
+}
+.bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: var(--accent);
+  transform-origin: bottom;
+  animation: sp-rise 0.7s var(--ease-out) both;
+  transition: height 0.5s var(--ease-out), background-color 0.15s ease;
+}
+.barCol:hover .bar,
+.barCol:focus-visible .bar {
+  background: var(--accent-hover);
+}
+.barLabel {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+.tooltip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  z-index: 2;
+  pointer-events: none;
+  animation: sp-fade-up 0.2s ease-out both;
+}

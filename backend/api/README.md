@@ -119,19 +119,106 @@ the current balance, and the event type:
 ```
 
 If the plate does not exist, it is inserted into PostgreSQL with a balance of
-`100.0`. If it already exists, the existing record is returned without creating
-a duplicate.
+`0.0` (configurable, see below). If it already exists, the existing record is
+returned without creating a duplicate.
 
-Each successful recognition registers an event in the `entradas` table. Events
-alternate between `entrada` and `saida` according to the number of previous
-records for the plate. A newly recognized plate therefore starts with an
-`entrada`.
+Each successful recognition registers an event in the `entradas` table. A
+newly recognized plate starts with an `entrada`; see *Entry/exit rules* below.
 
 When the recognition identifies an exit, the parking fee is calculated from the
 two most recent records for the plate. The first three hours cost `R$ 3.00`
 per hour, and each additional hour costs `R$ 1.00` per hour. Partial hours are
 charged proportionally. If the balance is insufficient, the exit is rejected
 with status `400`, and the balance and exit event are not changed.
+
+## Entry/exit rules (updated)
+
+Each event is now stored with its type (`entrada`, `saida` or `recusada`) in
+the `entradas` table, together with the charged amount, the stay in minutes,
+the device id (`X-Device-Id` header) and the OCR time. Old rows without a
+type are migrated on startup using the original parity rule.
+
+- Without extra information the direction alternates: if the plate is inside
+  the parking lot the read is an exit, otherwise an entry.
+- A second read of the same plate within `DUPLICATE_READ_SECONDS` (default
+  5 s) does not create a new event; the response has `"duplicada": true`.
+- A dedicated camera can force the direction: list its id in
+  `ENTRY_DEVICE_IDS` / `EXIT_DEVICE_IDS`, or send `?tipo=entrada|saida`.
+  An exit read for a plate that is not inside returns `409`.
+- A refused exit (insufficient balance) still returns `400` for the
+  ESP32-CAM, but is recorded as `recusada` and the customer is notified.
+- A plate recognized for the first time is created with
+  `RECOGNIZED_PLATE_INITIAL_BALANCE` (default `0`). Customers register and
+  choose whether to top up through the app.
+
+The recognize response now also includes `duplicada`, `valor_cobrado` and
+`permanencia_min`.
+
+## Endpoints used by the frontend
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/health` | API status |
+| `GET` | `/pricing` | Parking fee rules |
+| `GET` | `/plates` | All plates with balance and whether they are inside |
+| `POST` | `/plates` | Register a plate (`{"numero_placa": "ABC1D23"}`, balance defaults to 0) |
+| `GET` | `/plates/{placa}` | Balance, `no_patio`, `entrada_em`, unread notifications |
+| `POST` | `/plates/{placa}/balance` | Simulated top-up: `{"valor": 50, "metodo": "pix" \| "cartao"}` |
+| `GET` | `/plates/{placa}/history` | Entries, exits, refusals and top-ups |
+| `GET` | `/plates/{placa}/notifications` | Customer notifications |
+| `POST` | `/plates/{placa}/notifications/read` | Mark all as read |
+| `GET` | `/events?limit=&tipo=` | Latest events of all plates |
+| `GET` | `/stats/today` | Dashboard indicators and revenue per hour |
+| `GET` | `/spots` | Parking spot states |
+| `PUT` | `/spots/{id}` | Update a spot: `{"ocupada": true, "campo_gauss": 0.21}` |
+
+### Parking spot integration (MQTT)
+
+The spot sensors are not wired to the API by the firmware yet. Whoever
+implements the MQTT bridge only needs to call, for each reading or state
+change:
+
+```powershell
+curl.exe -X PUT "http://127.0.0.1:8000/spots/1" `
+  -H "Content-Type: application/json" `
+  -d '{\"ocupada\":true,\"campo_gauss\":0.214}'
+```
+
+`campo_gauss` (the |Δ field| measured by the HMC5883L) is optional and feeds
+the chart on the dashboard. `atualizado_em` only changes when the state
+changes; `ultima_leitura_em` changes on every call and tells the dashboard
+whether the sensor is online. The number of spots comes from `SPOT_COUNT`
+(default `2`, as in `hardware/main/main.c`).
+
+### Environment variables
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `DATABASE_URL` | `postgresql://postgres:postgres@localhost:15432/smart_parking` | Database |
+| `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173` | Frontend origins |
+| `SPOT_COUNT` | `2` | Number of monitored spots |
+| `RECOGNIZED_PLATE_INITIAL_BALANCE` | `0` | Balance of a plate first seen by the camera |
+| `LOW_BALANCE_THRESHOLD` | `10` | Below this the customer gets a low-balance notice |
+| `DUPLICATE_READ_SECONDS` | `5` | Window to ignore repeated reads |
+| `ENTRY_DEVICE_IDS` / `EXIT_DEVICE_IDS` | empty | Comma-separated camera ids per direction |
+| `APP_TIMEZONE` | `America/Sao_Paulo` | Time zone for daily statistics |
+
+To let the frontend on another device reach the API, start Uvicorn with
+`--host 0.0.0.0` and add that origin to `CORS_ORIGINS`.
+
+## Demo data
+
+Run from `backend` with the virtual environment active:
+
+```powershell
+python -m scripts.seed_demo              # fake plates, top-ups, entries/exits and notifications
+python -m scripts.seed_demo --sensores   # same, then simulates the spot sensors (Ctrl+C stops)
+python -m scripts.seed_demo --limpar     # removes only the demo plates
+python -m scripts.seed_demo --zerar      # wipes ALL data and frees the spots (before a real demo)
+```
+
+Times are relative to when the script runs. Use plate `RTQ4F27` in the
+customer app: it is parked right now.
 
 ## Inspect the database
 
